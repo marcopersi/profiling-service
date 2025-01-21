@@ -1,0 +1,163 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "FIDLEG Compliant Customer Profile API",
+    "description": "A REST API for managing customer profiles compliant with FINMA's FIDLEG requirements, including economic circumstances, risk tolerance, and more.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.example.com/v1",
+      "description": "Production server"
+    },
+    {
+      "url": "https://sandbox.api.example.com/v1",
+      "description": "Sandbox server"
+    }
+  ],
+  "paths": {
+    "/customers": {
+      "post": {
+        "summary": "Create a new customer profile",
+        "description": "Create a new customer profile with details required for FIDLEG compliance.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CustomerProfile"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Customer profile created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerProfileResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data"
+          }
+        }
+      }
+    },
+    "/customers/{customerId}": {
+      "get": {
+        "summary": "Retrieve a customer profile",
+        "description": "Get the details of a customer profile by ID.",
+        "parameters": [
+          {
+            "name": "customerId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The ID of the customer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Customer profile details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomerProfileResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Customer not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CustomerProfile": {
+        "type": "object",
+        "required": ["firstName", "lastName", "birthdate", "economicCircumstances", "riskTolerance"],
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Doe"
+          },
+          "birthdate": {
+            "type": "string",
+            "format": "date",
+            "example": "1980-01-01"
+          },
+          "contactDetails": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string",
+                "format": "email",
+                "example": "john.doe@example.com"
+              },
+              "phone": {
+                "type": "string",
+                "example": "+41791234567"
+              }
+            }
+          },
+          "economicCircumstances": {
+            "type": "object",
+            "properties": {
+              "annualIncome": {
+                "type": "number",
+                "example": 100000
+              },
+              "netWorth": {
+                "type": "number",
+                "example": 500000
+              },
+              "liabilities": {
+                "type": "number",
+                "example": 100000
+              }
+            }
+          },
+          "riskTolerance": {
+            "type": "string",
+            "enum": ["Low", "Medium", "High"],
+            "example": "Medium"
+          },
+          "investmentExperience": {
+            "type": "string",
+            "example": "Moderate"
+          },
+          "investmentObjectives": {
+            "type": "string",
+            "example": "Wealth accumulation"
+          }
+        }
+      },
+      "CustomerProfileResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "c123456"
+          },
+          "profile": {
+            "$ref": "#/components/schemas/CustomerProfile"
+          }
+        }
+      }
+    }
+  }
+}
+
