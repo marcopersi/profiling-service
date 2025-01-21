@@ -17,6 +17,25 @@
   ],
   "paths": {
     "/customers": {
+      "get": {
+        "summary": "Retrieve all customer profiles",
+        "description": "Get the details of all customer profiles without filters.",
+        "responses": {
+          "200": {
+            "description": "List of customer profiles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomerProfileResponse"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "post": {
         "summary": "Create a new customer profile",
         "description": "Create a new customer profile with details required for FIDLEG compliance.",
@@ -43,6 +62,83 @@
           },
           "400": {
             "description": "Invalid input data"
+          }
+        }
+      }
+    },
+    "/customers/search": {
+      "get": {
+        "summary": "Search for customer profiles",
+        "description": "Search customer profiles by attributes such as firstName, lastName, birthdate, riskTolerance, email, or phone.",
+        "parameters": [
+          {
+            "name": "firstName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by first name"
+          },
+          {
+            "name": "lastName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by last name"
+          },
+          {
+            "name": "birthdate",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "description": "Filter by birthdate"
+          },
+          {
+            "name": "riskTolerance",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["Low", "Medium", "High"]
+            },
+            "description": "Filter by risk tolerance"
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "email"
+            },
+            "description": "Filter by email"
+          },
+          {
+            "name": "phone",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by phone number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of matching customer profiles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CustomerProfileResponse"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid query parameters"
           }
         }
       }
@@ -160,4 +256,3 @@
     }
   }
 }
-

@@ -1,20 +1,4 @@
-# Maven/Gradle specific
-target/
-*.class
-*.jar
-*.war
-*.ear
-
-# IDE specific
-.idea/
-*.iml
-*.log
-.vscode/
-
-# OS specific
-.DS_Store
-Thumbs.db
-
-# Logs
-*.log
-
+/target
+.idea
+.openapi-generator-ignore
+.openapi-generator/
