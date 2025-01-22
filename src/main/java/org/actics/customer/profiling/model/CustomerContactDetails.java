@@ -8,23 +8,23 @@ import jakarta.annotation.Generated;
 import org.springframework.lang.Nullable;
 
 /**
- * CustomerProfileContactDetails
+ * CustomerContactDetails
  */
 @JsonTypeName("CustomerProfile_contactDetails")
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-01-21T22:01:26.297063+01:00[Europe/Zurich]", comments = "Generator version: 7.11.0")
-public class CustomerProfileContactDetails {
+public class CustomerContactDetails {
 
   private @Nullable String email;
   private @Nullable String phone;
 
-  public CustomerProfileContactDetails() {}
+  public CustomerContactDetails() {}
 
-  public CustomerProfileContactDetails(@Nullable String email, @Nullable String phone) {
+  public CustomerContactDetails(@Nullable String email, @Nullable String phone) {
     this.email = email;
     this.phone = phone;
   }
 
-  public CustomerProfileContactDetails email(String email) {
+  public CustomerContactDetails email(String email) {
     this.email = email;
     return this;
   }
@@ -45,7 +45,7 @@ public class CustomerProfileContactDetails {
     this.email = email;
   }
 
-  public CustomerProfileContactDetails phone(String phone) {
+  public CustomerContactDetails phone(String phone) {
     this.phone = phone;
     return this;
   }
@@ -73,7 +73,7 @@ public class CustomerProfileContactDetails {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    CustomerProfileContactDetails that = (CustomerProfileContactDetails) o;
+    CustomerContactDetails that = (CustomerContactDetails) o;
     return Objects.equals(this.email, that.email) &&
             Objects.equals(this.phone, that.phone);
   }
@@ -85,7 +85,7 @@ public class CustomerProfileContactDetails {
 
   @Override
   public String toString() {
-    return "class CustomerProfileContactDetails {\n" +
+    return "class CustomerContactDetails {\n" +
             "    email: " + toIndentedString(email) + "\n" +
             "    phone: " + toIndentedString(phone) + "\n" +
             "}";

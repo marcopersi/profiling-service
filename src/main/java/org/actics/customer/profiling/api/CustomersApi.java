@@ -5,7 +5,7 @@
  */
 package org.actics.customer.profiling.api;
 
-import org.actics.customer.profiling.model.CustomerProfile;
+import org.actics.customer.profiling.model.Customer;
 import org.actics.customer.profiling.model.CustomerProfileResponse;
 import org.springframework.format.annotation.DateTimeFormat;
 import java.time.LocalDate;
@@ -124,7 +124,7 @@ public interface CustomersApi {
      * POST /customers : Create a new customer profile
      * Create a new customer profile with details required for FIDLEG compliance.
      *
-     * @param customerProfile  (required)
+     * @param customer  (required)
      * @return Customer profile created successfully (status code 201)
      *         or Invalid input data (status code 400)
      */
@@ -147,7 +147,7 @@ public interface CustomersApi {
     )
     
     default ResponseEntity<CustomerProfileResponse> customersPost(
-        @Parameter(name = "CustomerProfile", description = "", required = true) @Valid @RequestBody CustomerProfile customerProfile
+        @Parameter(name = "Customer", description = "", required = true) @Valid @RequestBody Customer customer
     ) {
         getRequest().ifPresent(request -> {
             for (MediaType mediaType: MediaType.parseMediaTypes(request.getHeader("Accept"))) {

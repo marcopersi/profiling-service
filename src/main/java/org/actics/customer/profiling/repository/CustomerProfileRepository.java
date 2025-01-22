@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.actics.customer.profiling.jooq.tables.CustomerProfiles;
 import org.actics.customer.profiling.jooq.tables.records.CustomerProfilesRecord;
-import org.actics.customer.profiling.model.CustomerProfile;
-import org.actics.customer.profiling.model.CustomerProfileContactDetails;
+import org.actics.customer.profiling.model.Customer;
+import org.actics.customer.profiling.model.CustomerContactDetails;
 import org.actics.customer.profiling.model.CustomerProfileEconomicCircumstances;
 import org.jooq.DSLContext;
 import org.jooq.JSONB;
@@ -27,13 +27,13 @@ public class CustomerProfileRepository {
         this.dsl = dsl;
     }
 
-    public List<CustomerProfile> findAll() {
+    public List<Customer> findAll() {
         return dsl.selectFrom(CustomerProfiles.CUSTOMER_PROFILES)
                 .fetch()
                 .map(this::mapToDomain);
     }
 
-    public Optional<CustomerProfile> findById(UUID profileId) {
+    public Optional<Customer> findById(UUID profileId) {
         CustomerProfilesRecord customerProfilesRecord = dsl.selectFrom(CustomerProfiles.CUSTOMER_PROFILES)
                 .where(CustomerProfiles.CUSTOMER_PROFILES.ID.eq(profileId))
                 .fetchOne();
@@ -41,7 +41,7 @@ public class CustomerProfileRepository {
         return Optional.ofNullable(customerProfilesRecord).map(this::mapToDomain);
     }
 
-    public CustomerProfile save(CustomerProfile profile) {
+    public Customer save(Customer profile) {
         CustomerProfilesRecord customerProfilesRecord = dsl.newRecord(CustomerProfiles.CUSTOMER_PROFILES);
         customerProfilesRecord.setId(profile.getId());
         customerProfilesRecord.setFirstName(profile.getFirstName());
@@ -57,7 +57,7 @@ public class CustomerProfileRepository {
                     ? JSONB.valueOf(objectMapper.writeValueAsString(profile.getEconomicCircumstances()))
                     : null);
         } catch (JsonProcessingException e) {
-            throw new IllegalStateException("Failed to serialize JSON fields for CustomerProfile", e);
+            throw new IllegalStateException("Failed to serialize JSON fields for Customer", e);
         }
 
         customerProfilesRecord.setRiskTolerance(profile.getRiskTolerance().getValue());
@@ -91,25 +91,25 @@ public class CustomerProfileRepository {
                 .execute();
     }
 
-    private CustomerProfile mapToDomain(CustomerProfilesRecord customerProfilesRecord) {
+    private Customer mapToDomain(CustomerProfilesRecord customerProfilesRecord) {
         try {
-            return new CustomerProfile(
+            return new Customer(
                     customerProfilesRecord.getId(),
                     customerProfilesRecord.getFirstName(),
                     customerProfilesRecord.getLastName(),
                     customerProfilesRecord.getBirthdate(),
                     customerProfilesRecord.getContactDetails() != null
-                            ? objectMapper.readValue(customerProfilesRecord.getContactDetails().data(), CustomerProfileContactDetails.class)
+                            ? objectMapper.readValue(customerProfilesRecord.getContactDetails().data(), CustomerContactDetails.class)
                             : null,
                     customerProfilesRecord.getEconomicCircumstances() != null
                             ? objectMapper.readValue(customerProfilesRecord.getEconomicCircumstances().data(), CustomerProfileEconomicCircumstances.class)
                             : null,
-                    CustomerProfile.RiskToleranceEnum.fromValue(customerProfilesRecord.getRiskTolerance()),
+                    Customer.RiskToleranceEnum.fromValue(customerProfilesRecord.getRiskTolerance()),
                     customerProfilesRecord.getInvestmentExperience(),
                     customerProfilesRecord.getInvestmentObjectives()
             );
         } catch (Exception e) {
-            throw new IllegalStateException("Failed to map CustomerProfilesRecord to CustomerProfile", e);
+            throw new IllegalStateException("Failed to map CustomerProfilesRecord to Customer", e);
         }
     }
 

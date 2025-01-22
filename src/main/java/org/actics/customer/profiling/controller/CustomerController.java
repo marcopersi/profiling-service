@@ -1,6 +1,6 @@
 package org.actics.customer.profiling.controller;
 
-import org.actics.customer.profiling.model.CustomerProfile;
+import org.actics.customer.profiling.model.Customer;
 import org.actics.customer.profiling.model.CustomerProfileResponse;
 import org.actics.customer.profiling.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<CustomerProfileResponse> createCustomer(@RequestBody CustomerProfile profile) {
+    public ResponseEntity<CustomerProfileResponse> createCustomer(@RequestBody Customer profile) {
         CustomerProfileResponse response = customerService.createCustomer(profile);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

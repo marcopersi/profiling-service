@@ -1,6 +1,6 @@
 package org.actics.customer.profiling.service;
 
-import org.actics.customer.profiling.model.CustomerProfile;
+import org.actics.customer.profiling.model.Customer;
 import org.actics.customer.profiling.model.CustomerProfileResponse;
 import org.actics.customer.profiling.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ public class CustomerService {
         return customerRepository.findAll();
     }
 
-    public CustomerProfileResponse createCustomer(CustomerProfile profile) {
+    public CustomerProfileResponse createCustomer(Customer profile) {
         customerRepository.save(profile.getFirstName(), profile.getLastName());
         CustomerProfileResponse response = new CustomerProfileResponse();
         response.setFirstName(profile.getFirstName());

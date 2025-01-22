@@ -16,10 +16,10 @@ import java.util.Objects;
 import java.util.UUID;
 
 /**
- * CustomerProfile
+ * Customer
  */
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-01-21T22:01:26.297063+01:00[Europe/Zurich]", comments = "Generator version: 7.11.0")
-public class CustomerProfile {
+public class Customer {
 
   private UUID id;
   private String firstName;
@@ -28,21 +28,21 @@ public class CustomerProfile {
   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
   private LocalDate birthdate;
 
-  private @Nullable CustomerProfileContactDetails contactDetails;
+  private @Nullable CustomerContactDetails contactDetails;
   private CustomerProfileEconomicCircumstances economicCircumstances;
   private RiskToleranceEnum riskTolerance;
 
   private @Nullable String investmentExperience;
   private @Nullable String investmentObjectives;
 
-  public CustomerProfile() {}
+  public Customer() {}
 
-  public CustomerProfile(
+  public Customer(
           UUID id,
           String firstName,
           String lastName,
           LocalDate birthdate,
-          @Nullable CustomerProfileContactDetails contactDetails,
+          @Nullable CustomerContactDetails contactDetails,
           CustomerProfileEconomicCircumstances economicCircumstances,
           RiskToleranceEnum riskTolerance,
           @Nullable String investmentExperience,
@@ -107,11 +107,11 @@ public class CustomerProfile {
   @Valid
   @Schema(name = "contactDetails", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("contactDetails")
-  public CustomerProfileContactDetails getContactDetails() {
+  public CustomerContactDetails getContactDetails() {
     return contactDetails;
   }
 
-  public void setContactDetails(@Nullable CustomerProfileContactDetails contactDetails) {
+  public void setContactDetails(@Nullable CustomerContactDetails contactDetails) {
     this.contactDetails = contactDetails;
   }
 
@@ -195,7 +195,7 @@ public class CustomerProfile {
 
   @Override
   public String toString() {
-    return "CustomerProfile{" +
+    return "Customer{" +
             "id=" + id +
             ", firstName='" + firstName + '\'' +
             ", lastName='" + lastName + '\'' +
@@ -212,7 +212,7 @@ public class CustomerProfile {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    CustomerProfile that = (CustomerProfile) o;
+    Customer that = (Customer) o;
     return Objects.equals(id, that.id) &&
             Objects.equals(firstName, that.firstName) &&
             Objects.equals(lastName, that.lastName) &&

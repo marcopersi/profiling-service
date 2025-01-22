@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.actics.customer.profiling.model.CustomerProfile;
+import org.actics.customer.profiling.model.Customer;
 import org.actics.customer.profiling.model.CustomerProfileResponse;
 import org.actics.customer.profiling.service.CustomerProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ public class CustomerProfileController {
                     content = @Content(mediaType = "application/json",
                             schema = @Schema(implementation = CustomerProfileResponse.class)))})
     @PostMapping
-    public ResponseEntity<CustomerProfileResponse> createCustomerProfile(@RequestBody CustomerProfile profile) {
+    public ResponseEntity<CustomerProfileResponse> createCustomerProfile(@RequestBody Customer profile) {
         CustomerProfileResponse response = customerProfileService.createProfile(profile);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -64,7 +64,7 @@ public class CustomerProfileController {
                     @ApiResponse(responseCode = "404", description = "Not Found")})
     @PutMapping("/{profileId}")
     public ResponseEntity<CustomerProfileResponse> updateCustomerProfile(@PathVariable String profileId,
-                                                                         @RequestBody CustomerProfile profile) {
+                                                                         @RequestBody Customer profile) {
         CustomerProfileResponse response = customerProfileService.updateProfile(UUID.fromString(profileId), profile);
         return response != null ? ResponseEntity.ok(response) : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
