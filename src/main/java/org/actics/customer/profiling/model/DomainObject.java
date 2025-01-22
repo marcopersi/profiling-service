@@ -7,15 +7,17 @@ import java.util.UUID;
 public class DomainObject {
 
     private UUID id;
-    private String name;
+    private String type; // Umbenannt von "name" zu "type", um der Datenbankstruktur zu entsprechen.
     private List<DomainObjectAttribute> attributes;
+    private String name;
 
     // Standard-Konstruktor
     public DomainObject() {}
 
     // Konstruktor mit Feldern
-    public DomainObject(UUID id, String name, List<DomainObjectAttribute> attributes) {
+    public DomainObject(UUID id, String type, String name, List<DomainObjectAttribute> attributes) {
         this.id = id;
+        this.type = type;
         this.name = name;
         this.attributes = attributes;
     }
@@ -29,13 +31,22 @@ public class DomainObject {
         this.id = id;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String theName) {
+        this.name = theName;
     }
+
 
     public List<DomainObjectAttribute> getAttributes() {
         return attributes;
@@ -56,14 +67,14 @@ public class DomainObject {
         }
         DomainObject that = (DomainObject) o;
         return Objects.equals(id, that.id) &&
-                Objects.equals(name, that.name) &&
+                Objects.equals(type, that.type) &&
                 Objects.equals(attributes, that.attributes);
     }
 
     // hashCode-Methode
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, attributes);
+        return Objects.hash(id, type, attributes);
     }
 
     // toString-Methode
@@ -71,7 +82,7 @@ public class DomainObject {
     public String toString() {
         return "DomainObject{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", type='" + type + '\'' +
                 ", attributes=" + attributes +
                 '}';
     }

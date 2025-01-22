@@ -16,6 +16,7 @@ CREATE TABLE customers (
 
 CREATE TABLE BUSINESS_OBJECT (
                                  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+                                 name VARCHAR(255) NULL,
                                  type VARCHAR(255) NOT NULL
 );
 
