@@ -2,7 +2,7 @@ package org.actics.customer.profiling.controller;
 
 import org.actics.customer.profiling.model.CustomerProfile;
 import org.actics.customer.profiling.model.CustomerProfileResponse;
-import org.actics.customer.profiling.repository.CustomerRepository;
+import org.actics.customer.profiling.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,27 +14,22 @@ import java.util.List;
 @RequestMapping("/v1/customers")
 public class CustomerController {
 
-    private CustomerRepository customerRepository;
+    private final CustomerService customerService;
 
     @Autowired
-    public void setCustomerRepository(CustomerRepository customerRepository) {
-        this.customerRepository = customerRepository;
+    public CustomerController(CustomerService customerService) {
+        this.customerService = customerService;
     }
 
     @GetMapping
     public ResponseEntity<List<CustomerProfileResponse>> getAllCustomers() {
-        // Ruft alle Kunden aus dem Repository ab
-        List<CustomerProfileResponse> customers = customerRepository.findAll();
+        List<CustomerProfileResponse> customers = customerService.getAllCustomers();
         return ResponseEntity.ok(customers);
     }
 
     @PostMapping
     public ResponseEntity<CustomerProfileResponse> createCustomer(@RequestBody CustomerProfile profile) {
-        // Speichert einen neuen Kunden im Repository
-        customerRepository.save(profile.getFirstName(), profile.getLastName());
-        CustomerProfileResponse response = new CustomerProfileResponse();
-        response.setFirstName(profile.getFirstName());
-        response.setLastName(profile.getLastName());
+        CustomerProfileResponse response = customerService.createCustomer(profile);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -46,15 +41,13 @@ public class CustomerController {
             @RequestParam(required = false) String riskTolerance,
             @RequestParam(required = false) String email,
             @RequestParam(required = false) String phone) {
-        // Sucht Kunden basierend auf den angegebenen Parametern
-        List<CustomerProfileResponse> customers = customerRepository.search(firstName, lastName, birthdate, riskTolerance, email, phone);
+        List<CustomerProfileResponse> customers = customerService.searchCustomers(firstName, lastName, birthdate, riskTolerance, email, phone);
         return ResponseEntity.ok(customers);
     }
 
     @GetMapping("/{customerId}")
     public ResponseEntity<CustomerProfileResponse> getCustomerById(@PathVariable String customerId) {
-        // Ruft einen Kunden anhand seiner ID aus dem Repository ab
-        CustomerProfileResponse customer = customerRepository.findById(customerId);
+        CustomerProfileResponse customer = customerService.getCustomerById(customerId);
         if (customer != null) {
             return ResponseEntity.ok(customer);
         } else {
