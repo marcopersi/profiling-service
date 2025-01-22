@@ -1,31 +1,34 @@
 package org.actics.customer.profiling.model;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import java.math.BigDecimal;
-import org.springframework.lang.Nullable;
-
-import jakarta.validation.Valid;
-
-import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import jakarta.annotation.Generated;
+import jakarta.validation.Valid;
+import org.springframework.lang.Nullable;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * CustomerProfileEconomicCircumstances
  */
-
 @JsonTypeName("CustomerProfile_economicCircumstances")
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-01-21T22:01:26.297063+01:00[Europe/Zurich]", comments = "Generator version: 7.11.0")
 public class CustomerProfileEconomicCircumstances {
 
   private @Nullable BigDecimal annualIncome;
-
   private @Nullable BigDecimal netWorth;
-
   private @Nullable BigDecimal liabilities;
+
+  // Standard-Konstruktor
+  public CustomerProfileEconomicCircumstances() {}
+
+  // Konstruktor mit Feldern
+  public CustomerProfileEconomicCircumstances(@Nullable BigDecimal annualIncome, @Nullable BigDecimal netWorth, @Nullable BigDecimal liabilities) {
+    this.annualIncome = annualIncome;
+    this.netWorth = netWorth;
+    this.liabilities = liabilities;
+  }
 
   public CustomerProfileEconomicCircumstances annualIncome(BigDecimal annualIncome) {
     this.annualIncome = annualIncome;
@@ -36,14 +39,15 @@ public class CustomerProfileEconomicCircumstances {
    * Get annualIncome
    * @return annualIncome
    */
-  @Valid 
+  @Nullable
+  @Valid
   @Schema(name = "annualIncome", example = "100000", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("annualIncome")
   public BigDecimal getAnnualIncome() {
     return annualIncome;
   }
 
-  public void setAnnualIncome(BigDecimal annualIncome) {
+  public void setAnnualIncome(@Nullable BigDecimal annualIncome) {
     this.annualIncome = annualIncome;
   }
 
@@ -56,14 +60,15 @@ public class CustomerProfileEconomicCircumstances {
    * Get netWorth
    * @return netWorth
    */
-  @Valid 
+  @Nullable
+  @Valid
   @Schema(name = "netWorth", example = "500000", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("netWorth")
   public BigDecimal getNetWorth() {
     return netWorth;
   }
 
-  public void setNetWorth(BigDecimal netWorth) {
+  public void setNetWorth(@Nullable BigDecimal netWorth) {
     this.netWorth = netWorth;
   }
 
@@ -76,14 +81,15 @@ public class CustomerProfileEconomicCircumstances {
    * Get liabilities
    * @return liabilities
    */
-  @Valid 
+  @Nullable
+  @Valid
   @Schema(name = "liabilities", example = "100000", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("liabilities")
   public BigDecimal getLiabilities() {
     return liabilities;
   }
 
-  public void setLiabilities(BigDecimal liabilities) {
+  public void setLiabilities(@Nullable BigDecimal liabilities) {
     this.liabilities = liabilities;
   }
 
@@ -95,10 +101,10 @@ public class CustomerProfileEconomicCircumstances {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    CustomerProfileEconomicCircumstances customerProfileEconomicCircumstances = (CustomerProfileEconomicCircumstances) o;
-    return Objects.equals(this.annualIncome, customerProfileEconomicCircumstances.annualIncome) &&
-        Objects.equals(this.netWorth, customerProfileEconomicCircumstances.netWorth) &&
-        Objects.equals(this.liabilities, customerProfileEconomicCircumstances.liabilities);
+    CustomerProfileEconomicCircumstances that = (CustomerProfileEconomicCircumstances) o;
+    return Objects.equals(this.annualIncome, that.annualIncome) &&
+            Objects.equals(this.netWorth, that.netWorth) &&
+            Objects.equals(this.liabilities, that.liabilities);
   }
 
   @Override
@@ -108,13 +114,11 @@ public class CustomerProfileEconomicCircumstances {
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class CustomerProfileEconomicCircumstances {\n");
-    sb.append("    annualIncome: ").append(toIndentedString(annualIncome)).append("\n");
-    sb.append("    netWorth: ").append(toIndentedString(netWorth)).append("\n");
-    sb.append("    liabilities: ").append(toIndentedString(liabilities)).append("\n");
-    sb.append("}");
-    return sb.toString();
+    return "class CustomerProfileEconomicCircumstances {\n" +
+            "    annualIncome: " + toIndentedString(annualIncome) + "\n" +
+            "    netWorth: " + toIndentedString(netWorth) + "\n" +
+            "    liabilities: " + toIndentedString(liabilities) + "\n" +
+            "}";
   }
 
   /**
@@ -128,4 +132,3 @@ public class CustomerProfileEconomicCircumstances {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

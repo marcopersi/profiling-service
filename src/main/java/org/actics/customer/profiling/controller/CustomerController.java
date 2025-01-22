@@ -1,4 +1,4 @@
-package org.actics.customer.profiling.api;
+package org.actics.customer.profiling.controller;
 
 import org.actics.customer.profiling.model.CustomerProfile;
 import org.actics.customer.profiling.model.CustomerProfileResponse;

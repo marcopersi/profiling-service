@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-profile-service
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: profiling_db
+    ports:
+      - "5432:5432"
+    networks:
+      - pg-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin-profile-service
+    environment:
+      PGADMIN_DEFAULT_EMAIL: marcopersi@me.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "3000:80"
+    networks:
+      - pg-network
+
+networks:
+  pg-network:
+    driver: bridge

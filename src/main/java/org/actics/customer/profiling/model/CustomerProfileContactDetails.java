@@ -3,23 +3,26 @@ package org.actics.customer.profiling.model;
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.springframework.lang.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-
 import jakarta.annotation.Generated;
+import org.springframework.lang.Nullable;
 
 /**
  * CustomerProfileContactDetails
  */
-
 @JsonTypeName("CustomerProfile_contactDetails")
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-01-21T22:01:26.297063+01:00[Europe/Zurich]", comments = "Generator version: 7.11.0")
 public class CustomerProfileContactDetails {
 
   private @Nullable String email;
-
   private @Nullable String phone;
+
+  public CustomerProfileContactDetails() {}
+
+  public CustomerProfileContactDetails(@Nullable String email, @Nullable String phone) {
+    this.email = email;
+    this.phone = phone;
+  }
 
   public CustomerProfileContactDetails email(String email) {
     this.email = email;
@@ -30,6 +33,7 @@ public class CustomerProfileContactDetails {
    * Get email
    * @return email
    */
+  @Nullable
   @jakarta.validation.constraints.Email
   @Schema(name = "email", example = "john.doe@example.com", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("email")
@@ -37,7 +41,7 @@ public class CustomerProfileContactDetails {
     return email;
   }
 
-  public void setEmail(String email) {
+  public void setEmail(@Nullable String email) {
     this.email = email;
   }
 
@@ -50,14 +54,14 @@ public class CustomerProfileContactDetails {
    * Get phone
    * @return phone
    */
-  
+  @Nullable
   @Schema(name = "phone", example = "+41791234567", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
   @JsonProperty("phone")
   public String getPhone() {
     return phone;
   }
 
-  public void setPhone(String phone) {
+  public void setPhone(@Nullable String phone) {
     this.phone = phone;
   }
 
@@ -69,9 +73,9 @@ public class CustomerProfileContactDetails {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    CustomerProfileContactDetails customerProfileContactDetails = (CustomerProfileContactDetails) o;
-    return Objects.equals(this.email, customerProfileContactDetails.email) &&
-        Objects.equals(this.phone, customerProfileContactDetails.phone);
+    CustomerProfileContactDetails that = (CustomerProfileContactDetails) o;
+    return Objects.equals(this.email, that.email) &&
+            Objects.equals(this.phone, that.phone);
   }
 
   @Override
@@ -81,12 +85,10 @@ public class CustomerProfileContactDetails {
 
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class CustomerProfileContactDetails {\n");
-    sb.append("    email: ").append(toIndentedString(email)).append("\n");
-    sb.append("    phone: ").append(toIndentedString(phone)).append("\n");
-    sb.append("}");
-    return sb.toString();
+    return "class CustomerProfileContactDetails {\n" +
+            "    email: " + toIndentedString(email) + "\n" +
+            "    phone: " + toIndentedString(phone) + "\n" +
+            "}";
   }
 
   /**
@@ -100,4 +102,3 @@ public class CustomerProfileContactDetails {
     return o.toString().replace("\n", "\n    ");
   }
 }
-

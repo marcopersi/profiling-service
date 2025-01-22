@@ -16,17 +16,17 @@ public class JooqConfig {
     @Bean
     public DataSource dataSource() {
         return DataSourceBuilder.create()
-                .url("jdbc:h2:mem:testdb") // In-Memory H2-Datenbank
-                .username("sa")
-                .password("")
-                .driverClassName("org.h2.Driver")
+                .url("jdbc:postgresql://localhost:5432/profiling_db") // In-Memory H2-Datenbank
+                .username("postgres")
+                .password("password")
+                .driverClassName("org.postgresql.Driver")
                 .build();
     }
 
     @Bean
     public org.jooq.Configuration jooqConfiguration(DataSource dataSource) {
         return new DefaultConfiguration()
-                .set(SQLDialect.H2)
+                .set(SQLDialect.POSTGRES)
                 .set(dataSource);
     }
 
