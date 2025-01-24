@@ -3,12 +3,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.openapitools</groupId>
-    <artifactId>openapi-spring</artifactId>
+    <groupId>org.actics</groupId>
+    <artifactId>profiling-service</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
-    <name>openapi-spring</name>
-    <description>Spring Boot project with OpenAPI and JOOQ</description>
+    <name>profiling-service</name>
+    <description>Actics GmbH Fidleg compliant profiling service</description>
 
     <!-- Properties -->
     <properties>

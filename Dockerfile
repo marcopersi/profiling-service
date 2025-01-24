@@ -5,7 +5,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Kopiere die JAR-Datei in den Container
-ARG JAR_FILE=target/profiling-service-0.0.1-SNAPSHOT.jar
+ARG JAR_FILE=target/profiling-service-1.0.0.jar
 COPY ${JAR_FILE} app.jar
 
 # Exponiere den Port, auf dem die Spring Boot-Anwendung läuft
