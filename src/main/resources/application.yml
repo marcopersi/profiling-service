@@ -1,19 +1,21 @@
 spring:
-  springdoc:
-    swagger-ui:
-      enabled: true
-      path: /swagger-ui.html
-    api-docs:
-      path: /v3/api-docs
   datasource:
-    spring:
-      datasource:
-        url: jdbc:postgresql://localhost:5432/profiling_db
-        driver-class-name: org.postgresql.Driver
-        username: postgres
-        password: password
-      jpa:
-        hibernate:
-          ddl-auto: none
+    url: jdbc:postgresql://localhost:5432/profiling_db
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:password}
+  jpa:
+    hibernate:
+      ddl-auto: none
   jooq:
     sql-dialect: POSTGRES
+  logging:
+    level:
+      org.jooq.tools.LoggerListener: DEBUG
+      org.springframework.jdbc: DEBUG
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs

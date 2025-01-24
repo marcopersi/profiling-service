@@ -1,18 +1,18 @@
 package org.actics.customer.profiling.service;
 
-import org.actics.customer.profiling.model.Customer;
-import org.actics.customer.profiling.model.CustomerProfileResponse;
+import org.actics.customer.profiling.model.customer.CustomerProfile;
+import org.actics.customer.profiling.model.customer.CustomerProfileResponse;
+import org.actics.customer.profiling.model.customer.EconomicCircumstances;
+import org.actics.customer.profiling.model.customer.KnowledgeAndExperience;
 import org.actics.customer.profiling.repository.CustomerProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Service
 public class CustomerProfileService {
-
 
     private final CustomerProfileRepository customerProfileRepository;
 
@@ -21,41 +21,37 @@ public class CustomerProfileService {
         this.customerProfileRepository = customerProfileRepository;
     }
 
+    /**
+     * Retrieve all customer profiles.
+     */
     public List<CustomerProfileResponse> getAllProfiles() {
-        return customerProfileRepository.findAll()
-                .stream()
-                .map(this::mapToResponse)
-                .collect(Collectors.toList());
+        return customerProfileRepository.findAll();
     }
 
-    public CustomerProfileResponse createProfile(Customer profile) {
-        Customer savedProfile = customerProfileRepository.save(profile);
-        return mapToResponse(savedProfile);
+    /**
+     * Create a new customer profile.
+     */
+    public CustomerProfileResponse createProfile(CustomerProfile profile) {
+        return customerProfileRepository.save(profile);
     }
 
+    /**
+     * Retrieve a customer profile by ID.
+     */
     public CustomerProfileResponse getProfileById(UUID profileId) {
-        return customerProfileRepository.findById(profileId)
-                .map(this::mapToResponse)
-                .orElse(null);
+        return customerProfileRepository.findById(profileId).orElse(null);
     }
 
-    public CustomerProfileResponse updateProfile(UUID profileId, Customer updatedProfile) {
-        return customerProfileRepository.findById(profileId)
-                .map(existingProfile -> {
-                    existingProfile.setFirstName(updatedProfile.getFirstName());
-                    existingProfile.setLastName(updatedProfile.getLastName());
-                    existingProfile.setBirthdate(updatedProfile.getBirthdate());
-                    existingProfile.setContactDetails(updatedProfile.getContactDetails());
-                    existingProfile.setEconomicCircumstances(updatedProfile.getEconomicCircumstances());
-                    existingProfile.setRiskTolerance(updatedProfile.getRiskTolerance());
-                    existingProfile.setInvestmentExperience(updatedProfile.getInvestmentExperience());
-                    existingProfile.setInvestmentObjectives(updatedProfile.getInvestmentObjectives());
-                    Customer savedProfile = customerProfileRepository.save(existingProfile);
-                    return mapToResponse(savedProfile);
-                })
-                .orElse(null);
+    /**
+     * Update an existing customer profile.
+     */
+    public CustomerProfileResponse updateProfile(CustomerProfile updatedProfile) {
+        return customerProfileRepository.save(updatedProfile);
     }
 
+    /**
+     * Delete a customer profile.
+     */
     public boolean deleteProfile(UUID profileId) {
         if (customerProfileRepository.existsById(profileId)) {
             customerProfileRepository.deleteById(profileId);
@@ -64,12 +60,38 @@ public class CustomerProfileService {
         return false;
     }
 
-    private CustomerProfileResponse mapToResponse(Customer profile) {
-        CustomerProfileResponse response = new CustomerProfileResponse();
-        response.setId(profile.getId());
-        response.setFirstName(profile.getFirstName());
-        response.setLastName(profile.getLastName());
-        return response;
+    /**
+     * Update economic circumstances for a customer profile.
+     */
+    public CustomerProfileResponse updateEconomicCircumstances(UUID profileId, EconomicCircumstances circumstances) {
+        //FIXME implementation missing
+        return null;
+    }
+
+    /**
+     * Retrieve economic circumstances for a customer profile.
+     */
+    public EconomicCircumstances getEconomicCircumstances(UUID profileId) {
+        return customerProfileRepository.findById(profileId)
+                .map(CustomerProfileResponse::getEconomicCircumstances)
+                .orElse(null);
+    }
+
+    /**
+     * Update knowledge and experience for a customer profile.
+     */
+    public CustomerProfileResponse updateKnowledgeAndExperience(UUID profileId, KnowledgeAndExperience knowledgeAndExperience) {
+        //FIXME implementation missing
+        return null;
+    }
+
+    /**
+     * Retrieve knowledge and experience for a customer profile.
+     */
+    public KnowledgeAndExperience getKnowledgeAndExperience(UUID profileId) {
+        return customerProfileRepository.findById(profileId)
+                .map(CustomerProfileResponse::getKnowledgeAndExperience)
+                .orElse(null);
     }
 
 }

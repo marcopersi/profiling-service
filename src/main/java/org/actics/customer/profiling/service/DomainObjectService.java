@@ -6,7 +6,6 @@ import org.actics.customer.profiling.repository.DomainObjectRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -28,19 +27,18 @@ public class DomainObjectService {
     }
 
     public DomainObject createDomainObject(DomainObject domainObject) {
-        domainObject.setId(UUID.randomUUID());
-        return domainObjectRepository.save(Optional.of(domainObject)).orElse(null);
+        return domainObjectRepository.save(domainObject).orElse(null);
     }
 
     public DomainObject updateDomainObject(UUID id, DomainObject updatedDomainObject) {
-        Optional<DomainObject> existingDomainObject = domainObjectRepository.findById(id);
-        if (existingDomainObject.isPresent()) {
-            DomainObject domainObject = existingDomainObject.get();
-            domainObject.setType(updatedDomainObject.getType());
-            domainObject.setAttributes(updatedDomainObject.getAttributes());
-            return domainObjectRepository.save(Optional.of(domainObject)).orElse(null);
-        }
-        return null;
+        return domainObjectRepository.findById(id)
+                .map(existingDomainObject -> {
+                    existingDomainObject.setType(updatedDomainObject.getType());
+                    existingDomainObject.setName(updatedDomainObject.getName());
+                    existingDomainObject.setAttributes(updatedDomainObject.getAttributes());
+                    return domainObjectRepository.save(existingDomainObject).orElse(null);
+                })
+                .orElse(null);
     }
 
     public boolean deleteDomainObject(UUID id) {
@@ -51,15 +49,14 @@ public class DomainObjectService {
     }
 
     public DomainObjectAttribute addAttributeToDomainObject(UUID domainObjectId, DomainObjectAttribute attribute) {
-        Optional<DomainObject> domainObjectOptional = domainObjectRepository.findById(domainObjectId);
-        if (domainObjectOptional.isPresent()) {
-            DomainObject domainObject = domainObjectOptional.get();
-            attribute.setId(UUID.randomUUID());
-            domainObject.getAttributes().add(attribute);
-            domainObjectRepository.save(Optional.of(domainObject));
-            return attribute;
-        }
-        return null;
+        return domainObjectRepository.findById(domainObjectId)
+                .map(domainObject -> {
+                    attribute.setId(null); // Die Datenbank generiert die ID
+                    domainObject.getAttributes().add(attribute);
+                    domainObjectRepository.save(domainObject);
+                    return attribute;
+                })
+                .orElse(null);
     }
 
     public List<DomainObjectAttribute> getAttributesForDomainObject(UUID domainObjectId) {
@@ -69,17 +66,16 @@ public class DomainObjectService {
     }
 
     public boolean deleteAttributeFromDomainObject(UUID domainObjectId, UUID attributeId) {
-        Optional<DomainObject> domainObjectOptional = domainObjectRepository.findById(domainObjectId);
-        if (domainObjectOptional.isPresent()) {
-            DomainObject domainObject = domainObjectOptional.get();
-            List<DomainObjectAttribute> updatedAttributes = domainObject.getAttributes().stream()
-                    .filter(attr -> !attr.getId().equals(attributeId))
-                    .collect(Collectors.toList());
-            domainObject.setAttributes(updatedAttributes);
-            domainObjectRepository.save(Optional.of(domainObject));
-            return true;
-        }
-        return false;
+        return domainObjectRepository.findById(domainObjectId)
+                .map(domainObject -> {
+                    List<DomainObjectAttribute> updatedAttributes = domainObject.getAttributes().stream()
+                            .filter(attr -> !attr.getId().equals(attributeId))
+                            .collect(Collectors.toList());
+                    domainObject.setAttributes(updatedAttributes);
+                    domainObjectRepository.save(domainObject);
+                    return true;
+                })
+                .orElse(false);
     }
 
     public List<DomainObject> findDomainObjectsByName(String name) {

@@ -1,258 +1,261 @@
-{
-  "openapi": "3.0.0",
-  "info": {
-    "title": "FIDLEG Compliant Customer Profile API",
-    "description": "A REST API for managing customer profiles compliant with FINMA's FIDLEG requirements, including economic circumstances, risk tolerance, and more.",
-    "version": "1.0.0"
-  },
-  "servers": [
-    {
-      "url": "https://api.example.com/v1",
-      "description": "Production server"
-    },
-    {
-      "url": "https://sandbox.api.example.com/v1",
-      "description": "Sandbox server"
-    }
-  ],
-  "paths": {
-    "/customers": {
-      "get": {
-        "summary": "Retrieve all customer profiles",
-        "description": "Get the details of all customer profiles without filters.",
-        "responses": {
-          "200": {
-            "description": "List of customer profiles",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CustomerProfileResponse"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "summary": "Create a new customer profile",
-        "description": "Create a new customer profile with details required for FIDLEG compliance.",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CustomerProfile"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Customer profile created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CustomerProfileResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid input data"
-          }
-        }
-      }
-    },
-    "/customers/search": {
-      "get": {
-        "summary": "Search for customer profiles",
-        "description": "Search customer profiles by attributes such as firstName, lastName, birthdate, riskTolerance, email, or phone.",
-        "parameters": [
-          {
-            "name": "firstName",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Filter by first name"
-          },
-          {
-            "name": "lastName",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Filter by last name"
-          },
-          {
-            "name": "birthdate",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            },
-            "description": "Filter by birthdate"
-          },
-          {
-            "name": "riskTolerance",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": ["Low", "Medium", "High"]
-            },
-            "description": "Filter by risk tolerance"
-          },
-          {
-            "name": "email",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "format": "email"
-            },
-            "description": "Filter by email"
-          },
-          {
-            "name": "phone",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Filter by phone number"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "List of matching customer profiles",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/CustomerProfileResponse"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid query parameters"
-          }
-        }
-      }
-    },
-    "/customers/{customerId}": {
-      "get": {
-        "summary": "Retrieve a customer profile",
-        "description": "Get the details of a customer profile by ID.",
-        "parameters": [
-          {
-            "name": "customerId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "The ID of the customer"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Customer profile details",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CustomerProfileResponse"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Customer not found"
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "CustomerProfile": {
-        "type": "object",
-        "required": ["firstName", "lastName", "birthdate", "economicCircumstances", "riskTolerance"],
-        "properties": {
-          "firstName": {
-            "type": "string",
-            "example": "John"
-          },
-          "lastName": {
-            "type": "string",
-            "example": "Doe"
-          },
-          "birthdate": {
-            "type": "string",
-            "format": "date",
-            "example": "1980-01-01"
-          },
-          "contactDetails": {
-            "type": "object",
-            "properties": {
-              "email": {
-                "type": "string",
-                "format": "email",
-                "example": "john.doe@example.com"
-              },
-              "phone": {
-                "type": "string",
-                "example": "+41791234567"
-              }
-            }
-          },
-          "economicCircumstances": {
-            "type": "object",
-            "properties": {
-              "annualIncome": {
-                "type": "number",
-                "example": 100000
-              },
-              "netWorth": {
-                "type": "number",
-                "example": 500000
-              },
-              "liabilities": {
-                "type": "number",
-                "example": 100000
-              }
-            }
-          },
-          "riskTolerance": {
-            "type": "string",
-            "enum": ["Low", "Medium", "High"],
-            "example": "Medium"
-          },
-          "investmentExperience": {
-            "type": "string",
-            "example": "Moderate"
-          },
-          "investmentObjectives": {
-            "type": "string",
-            "example": "Wealth accumulation"
-          }
-        }
-      },
-      "CustomerProfileResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "example": "c123456"
-          },
-          "profile": {
-            "$ref": "#/components/schemas/CustomerProfile"
-          }
-        }
-      }
-    }
-  }
-}
+openapi: 3.0.0
+info:
+description: "A REST API for managing customer profiles compliant with FINMA's FIDLEG requirements, including economic circumstances, risk tolerance, and more."
+title: FIDLEG Compliant Customer Profile API
+version: 1.0.0
+servers:
+- description: Production server
+url: https://api.example.com/v1
+- description: Sandbox server
+url: https://sandbox.api.example.com/v1
+- description: Local server
+url: http://localhost:8080/v1
+paths:
+/customers:
+get:
+summary: Retrieve all customer profiles
+description: Get the details of all customer profiles without filters.
+responses:
+"200":
+description: List of customer profiles
+content:
+application/json:
+schema:
+type: array
+items:
+$ref: '#/components/schemas/CustomerResponse'
+post:
+summary: Create a new customer profile
+description: Create a new customer profile with details required for FIDLEG compliance.
+requestBody:
+required: true
+content:
+application/json:
+schema:
+$ref: '#/components/schemas/Customer'
+responses:
+"201":
+description: Customer profile created successfully
+content:
+application/json:
+schema:
+$ref: '#/components/schemas/CustomerResponse'
+"400":
+description: Invalid input data
+/customers/search:
+get:
+summary: Search for customer profiles
+description: Search customer profiles by attributes such as firstName, lastName, birthdate, riskTolerance, email, or phone.
+parameters:
+- name: firstName
+in: query
+required: false
+schema:
+type: string
+description: Filter by first name
+- name: lastName
+in: query
+required: false
+schema:
+type: string
+description: Filter by last name
+- name: birthdate
+in: query
+required: false
+schema:
+type: string
+format: date
+description: Filter by birthdate
+- name: riskTolerance
+in: query
+required: false
+schema:
+type: string
+enum:
+- Low
+- Medium
+- High
+description: Filter by risk tolerance
+- name: email
+in: query
+required: false
+schema:
+type: string
+format: email
+description: Filter by email
+- name: phone
+in: query
+required: false
+schema:
+type: string
+description: Filter by phone number
+responses:
+"200":
+description: List of matching customer profiles
+content:
+application/json:
+schema:
+type: array
+items:
+$ref: '#/components/schemas/CustomerResponse'
+"400":
+description: Invalid query parameters
+/customers/{customerId}:
+get:
+summary: Retrieve a customer profile
+description: Get the details of a customer profile by ID.
+parameters:
+- name: customerId
+in: path
+required: true
+schema:
+type: string
+description: The ID of the customer
+responses:
+"200":
+description: Customer profile details
+content:
+application/json:
+schema:
+$ref: '#/components/schemas/CustomerResponse'
+"404":
+description: Customer not found
+/customers/{customerId}/knowledge-and-experience:
+get:
+summary: Retrieve knowledge and experience details
+description: Retrieve the knowledge and experience details of a customer.
+parameters:
+- name: customerId
+in: path
+required: true
+schema:
+type: string
+description: The ID of the customer
+responses:
+"200":
+description: Knowledge and experience details retrieved successfully.
+content:
+application/json:
+schema:
+$ref: '#/components/schemas/KnowledgeAndExperience'
+"404":
+description: Customer not found
+components:
+schemas:
+Customer:
+type: object
+required:
+- firstName
+- lastName
+- birthdate
+- economicCircumstances
+- knowledgeAndExperience
+- riskTolerance
+properties:
+salutation:
+type: string
+example: Mr.
+firstName:
+type: string
+example: John
+lastName:
+type: string
+example: Doe
+birthdate:
+type: string
+format: date
+example: 1980-01-01
+civilStatus:
+type: string
+example: Married
+address:
+$ref: '#/components/schemas/Address'
+hobbies:
+type: array
+items:
+type: string
+example: ["Reading", "Traveling"]
+economicCircumstances:
+$ref: '#/components/schemas/EconomicCircumstances'
+knowledgeAndExperience:
+$ref: '#/components/schemas/KnowledgeAndExperience'
+riskTolerance:
+type: string
+enum:
+- Low
+- Medium
+- High
+example: Medium
+investmentObjectives:
+type: string
+example: Wealth accumulation
+CustomerResponse:
+type: object
+properties:
+id:
+type: string
+example: c123456
+profile:
+$ref: '#/components/schemas/Customer'
+Address:
+type: object
+properties:
+street:
+type: string
+postalCode:
+type: string
+city:
+type: string
+country:
+type: string
+example:
+street: Bahnhofstrasse 1
+postalCode: 8001
+city: Zurich
+country: Switzerland
+EconomicCircumstances:
+type: object
+properties:
+annualIncome:
+type: number
+example: 100000
+netWorth:
+type: number
+example: 500000
+liabilities:
+type: number
+example: 100000
+monthlyExpenses:
+type: number
+example: 3000
+KnowledgeAndExperience:
+type: object
+properties:
+tradingFrequency:
+type: string
+professionalMarketExperience:
+type: boolean
+experiences:
+type: array
+items:
+$ref: '#/components/schemas/Experience'
+example:
+tradingFrequency: Daily
+professionalMarketExperience: true
+experiences:
+- assetClass: Stocks
+knowledgeLevel: Advanced
+experienceLevel: Extensive
+Experience:
+type: object
+properties:
+assetClass:
+type: string
+knowledgeLevel:
+type: string
+experienceLevel:
+type: string
+example:
+assetClass: Stocks
+knowledgeLevel: Advanced
+experienceLevel: Extensive

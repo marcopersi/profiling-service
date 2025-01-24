@@ -1,11 +1,13 @@
 package org.actics.customer.profiling.service;
 
-import org.actics.customer.profiling.model.Customer;
-import org.actics.customer.profiling.model.CustomerProfileResponse;
+import org.actics.customer.profiling.model.customer.Customer;
+import org.actics.customer.profiling.model.customer.CustomerResponse;
 import org.actics.customer.profiling.repository.CustomerRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class CustomerService {
@@ -16,23 +18,45 @@ public class CustomerService {
         this.customerRepository = customerRepository;
     }
 
-    public List<CustomerProfileResponse> getAllCustomers() {
+    /**
+     * Retrieve all customers.
+     * @return List of all customers as CustomerResponse.
+     */
+    public List<CustomerResponse> getAllCustomers() {
         return customerRepository.findAll();
     }
 
-    public CustomerProfileResponse createCustomer(Customer profile) {
-        customerRepository.save(profile.getFirstName(), profile.getLastName());
-        CustomerProfileResponse response = new CustomerProfileResponse();
-        response.setFirstName(profile.getFirstName());
-        response.setLastName(profile.getLastName());
-        return response;
+    /**
+     * Create a new customer.
+     * @param customer The customer data to save.
+     * @return The created customer as CustomerResponse.
+     */
+    public CustomerResponse createCustomer(Customer customer) {
+        return customerRepository.save(customer);
     }
 
-    public CustomerProfileResponse getCustomerById(String customerId) {
+    /**
+     * Retrieve a customer by ID.
+     * @param customerId The UUID of the customer to retrieve.
+     * @return The customer data as CustomerResponse or null if not found.
+     */
+    public CustomerResponse findById(UUID customerId) {
         return customerRepository.findById(customerId);
     }
 
-    public List<CustomerProfileResponse> searchCustomers(String firstName, String lastName, String birthdate, String riskTolerance, String email, String phone) {
-        return customerRepository.search(firstName, lastName, birthdate, riskTolerance, email, phone);
+    public List<CustomerResponse> searchCustomers(
+            String firstName,
+            String lastName,
+            LocalDate birthdate,
+            String segmentation,
+            String civilStatus,
+            String socialSecurityNumber,
+            String email,
+            String phone,
+            String occupation,
+            String academicDegree
+    ) {
+        return customerRepository.search(firstName, lastName, birthdate, segmentation, civilStatus, socialSecurityNumber, email, phone, occupation, academicDegree);
     }
+
 }

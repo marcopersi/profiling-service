@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   postgres:
     image: postgres:latest
@@ -10,6 +12,9 @@ services:
       - "5432:5432"
     networks:
       - pg-network
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
 
   pgadmin:
     image: dpage/pgadmin4
@@ -21,6 +26,27 @@ services:
       - "3000:80"
     networks:
       - pg-network
+
+  app:
+    image: openjdk:17-jdk-slim
+    container_name: profiling-service-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/profiling_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: password
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "8080:8080"
+    networks:
+      - pg-network
+    depends_on:
+      - postgres
+
+volumes:
+  pg-data:
 
 networks:
   pg-network:

@@ -4,9 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.actics.customer.profiling.jooq.tables.CustomerProfiles;
 import org.actics.customer.profiling.jooq.tables.records.CustomerProfilesRecord;
-import org.actics.customer.profiling.model.Customer;
-import org.actics.customer.profiling.model.CustomerContactDetails;
-import org.actics.customer.profiling.model.CustomerProfileEconomicCircumstances;
+import org.actics.customer.profiling.model.customer.*;
+import org.actics.customer.profiling.model.enums.RiskTolerance;
 import org.jooq.DSLContext;
 import org.jooq.JSONB;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +26,13 @@ public class CustomerProfileRepository {
         this.dsl = dsl;
     }
 
-    public List<Customer> findAll() {
+    public List<CustomerProfileResponse> findAll() {
         return dsl.selectFrom(CustomerProfiles.CUSTOMER_PROFILES)
                 .fetch()
                 .map(this::mapToDomain);
     }
 
-    public Optional<Customer> findById(UUID profileId) {
+    public Optional<CustomerProfileResponse> findById(UUID profileId) {
         CustomerProfilesRecord customerProfilesRecord = dsl.selectFrom(CustomerProfiles.CUSTOMER_PROFILES)
                 .where(CustomerProfiles.CUSTOMER_PROFILES.ID.eq(profileId))
                 .fetchOne();
@@ -41,40 +40,56 @@ public class CustomerProfileRepository {
         return Optional.ofNullable(customerProfilesRecord).map(this::mapToDomain);
     }
 
-    public Customer save(Customer profile) {
+    public CustomerProfileResponse save(CustomerProfile customerProfile) {
         CustomerProfilesRecord customerProfilesRecord = dsl.newRecord(CustomerProfiles.CUSTOMER_PROFILES);
-        customerProfilesRecord.setId(profile.getId());
-        customerProfilesRecord.setFirstName(profile.getFirstName());
-        customerProfilesRecord.setLastName(profile.getLastName());
-        customerProfilesRecord.setBirthdate(profile.getBirthdate());
 
         try {
-            customerProfilesRecord.setContactDetails(profile.getContactDetails() != null
-                    ? JSONB.valueOf(objectMapper.writeValueAsString(profile.getContactDetails()))
-                    : null);
 
-            customerProfilesRecord.setEconomicCircumstances(profile.getEconomicCircumstances() != null
-                    ? JSONB.valueOf(objectMapper.writeValueAsString(profile.getEconomicCircumstances()))
-                    : null);
+            customerProfilesRecord.setCustomerId(customerProfile.getCustomerId());
+
+            customerProfilesRecord.setRiskTolerance(
+                    customerProfile.getRiskTolerance() != null
+                            ? customerProfile.getRiskTolerance().name()
+                            : null
+            );
+
+            customerProfilesRecord.setEconomicCircumstances(
+                    customerProfile.getEconomicCircumstances() != null
+                            ? JSONB.valueOf(objectMapper.writeValueAsString(customerProfile.getEconomicCircumstances()))
+                            : null
+            );
+            customerProfilesRecord.setKnowledgeAndExperience(
+                    customerProfile.getKnowledgeAndExperience() != null
+                            ? JSONB.valueOf(objectMapper.writeValueAsString(customerProfile.getKnowledgeAndExperience()))
+                            : null
+            );
+            // Set InvestmentPurpose
+            customerProfilesRecord.setInvestmentObjectives(customerProfile.getInvestmentObjectives());
+            customerProfilesRecord.setInvestmentPurpose(customerProfile.getInvestmentPurpose());
+
         } catch (JsonProcessingException e) {
-            throw new IllegalStateException("Failed to serialize JSON fields for Customer", e);
+            throw new IllegalStateException("Failed to serialize JSON fields for CustomerProfile", e);
         }
-
-        customerProfilesRecord.setRiskTolerance(profile.getRiskTolerance().getValue());
-        customerProfilesRecord.setInvestmentExperience(profile.getInvestmentExperience());
-        customerProfilesRecord.setInvestmentObjectives(profile.getInvestmentObjectives());
 
         if (dsl.fetchExists(
                 dsl.selectOne()
                         .from(CustomerProfiles.CUSTOMER_PROFILES)
-                        .where(CustomerProfiles.CUSTOMER_PROFILES.ID.eq(customerProfilesRecord.getId()))
+                        .where(CustomerProfiles.CUSTOMER_PROFILES.CUSTOMER_ID.eq(customerProfilesRecord.getCustomerId()))
         )) {
             customerProfilesRecord.update();
         } else {
             customerProfilesRecord.insert();
         }
 
-        return mapToDomain(customerProfilesRecord);
+        return CustomerProfileResponse.builder()
+                .id(customerProfilesRecord.getId())
+                .customerId(customerProfilesRecord.getCustomerId())
+                .riskTolerance(customerProfile.getRiskTolerance())
+                .economicCircumstances(customerProfile.getEconomicCircumstances())
+                .knowledgeAndExperience(customerProfile.getKnowledgeAndExperience())
+                .investmentPurpose(customerProfile.getInvestmentPurpose())
+                .investmentObjectives(customerProfile.getInvestmentObjectives()) // Optional
+                .build();
     }
 
     public boolean existsById(UUID profileId) {
@@ -91,25 +106,25 @@ public class CustomerProfileRepository {
                 .execute();
     }
 
-    private Customer mapToDomain(CustomerProfilesRecord customerProfilesRecord) {
+    private CustomerProfileResponse mapToDomain(CustomerProfilesRecord customerProfilesRecord) {
         try {
-            return new Customer(
-                    customerProfilesRecord.getId(),
-                    customerProfilesRecord.getFirstName(),
-                    customerProfilesRecord.getLastName(),
-                    customerProfilesRecord.getBirthdate(),
-                    customerProfilesRecord.getContactDetails() != null
-                            ? objectMapper.readValue(customerProfilesRecord.getContactDetails().data(), CustomerContactDetails.class)
-                            : null,
-                    customerProfilesRecord.getEconomicCircumstances() != null
-                            ? objectMapper.readValue(customerProfilesRecord.getEconomicCircumstances().data(), CustomerProfileEconomicCircumstances.class)
-                            : null,
-                    Customer.RiskToleranceEnum.fromValue(customerProfilesRecord.getRiskTolerance()),
-                    customerProfilesRecord.getInvestmentExperience(),
-                    customerProfilesRecord.getInvestmentObjectives()
-            );
+            return CustomerProfileResponse.builder()
+                    .economicCircumstances(customerProfilesRecord.getEconomicCircumstances() != null
+                            ? objectMapper.readValue(customerProfilesRecord.getEconomicCircumstances().data(), EconomicCircumstances.class)
+                            : null)
+                    .knowledgeAndExperience(customerProfilesRecord.getKnowledgeAndExperience() != null
+                            ? objectMapper.readValue(customerProfilesRecord.getKnowledgeAndExperience().data(), KnowledgeAndExperience.class)
+                            : null)
+                    .riskTolerance(customerProfilesRecord.getRiskTolerance() != null
+                            ? RiskTolerance.valueOf(customerProfilesRecord.getRiskTolerance().toUpperCase())
+                            : null)
+                    .investmentPurpose(customerProfilesRecord.getInvestmentPurpose())
+                    .investmentObjectives(customerProfilesRecord.getInvestmentObjectives())
+                    .customerId(customerProfilesRecord.getCustomerId())
+                    .id(customerProfilesRecord.getId())
+                    .build();
         } catch (Exception e) {
-            throw new IllegalStateException("Failed to map CustomerProfilesRecord to Customer", e);
+            throw new IllegalStateException("Failed to map CustomerProfilesRecord to CustomerProfileResponse", e);
         }
     }
 

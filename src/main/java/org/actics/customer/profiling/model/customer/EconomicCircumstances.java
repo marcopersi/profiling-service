@@ -1,4 +1,4 @@
-package org.actics.customer.profiling.model;
+package org.actics.customer.profiling.model.customer;
 
 import java.math.BigDecimal;
 import java.util.Objects;
@@ -10,27 +10,29 @@ import org.springframework.lang.Nullable;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * CustomerProfileEconomicCircumstances
+ * EconomicCircumstances
  */
 @JsonTypeName("CustomerProfile_economicCircumstances")
 @Generated(value = "org.openapitools.codegen.languages.SpringCodegen", date = "2025-01-21T22:01:26.297063+01:00[Europe/Zurich]", comments = "Generator version: 7.11.0")
-public class CustomerProfileEconomicCircumstances {
+public class EconomicCircumstances {
 
   private @Nullable BigDecimal annualIncome;
   private @Nullable BigDecimal netWorth;
   private @Nullable BigDecimal liabilities;
+  private @Nullable BigDecimal monthlyExpenses;
 
   // Standard-Konstruktor
-  public CustomerProfileEconomicCircumstances() {}
+  public EconomicCircumstances() {}
 
   // Konstruktor mit Feldern
-  public CustomerProfileEconomicCircumstances(@Nullable BigDecimal annualIncome, @Nullable BigDecimal netWorth, @Nullable BigDecimal liabilities) {
+  public EconomicCircumstances(@Nullable BigDecimal annualIncome, @Nullable BigDecimal netWorth, @Nullable BigDecimal liabilities, @Nullable BigDecimal monthlyExpenses) {
     this.annualIncome = annualIncome;
     this.netWorth = netWorth;
     this.liabilities = liabilities;
+    this.monthlyExpenses = monthlyExpenses;
   }
 
-  public CustomerProfileEconomicCircumstances annualIncome(BigDecimal annualIncome) {
+  public EconomicCircumstances annualIncome(BigDecimal annualIncome) {
     this.annualIncome = annualIncome;
     return this;
   }
@@ -51,7 +53,7 @@ public class CustomerProfileEconomicCircumstances {
     this.annualIncome = annualIncome;
   }
 
-  public CustomerProfileEconomicCircumstances netWorth(BigDecimal netWorth) {
+  public EconomicCircumstances netWorth(BigDecimal netWorth) {
     this.netWorth = netWorth;
     return this;
   }
@@ -72,7 +74,7 @@ public class CustomerProfileEconomicCircumstances {
     this.netWorth = netWorth;
   }
 
-  public CustomerProfileEconomicCircumstances liabilities(BigDecimal liabilities) {
+  public EconomicCircumstances liabilities(BigDecimal liabilities) {
     this.liabilities = liabilities;
     return this;
   }
@@ -93,6 +95,22 @@ public class CustomerProfileEconomicCircumstances {
     this.liabilities = liabilities;
   }
 
+  /**
+   * Get monthlyExpenses
+   * @return monthlyExpenses
+   */
+  @Nullable
+  @Valid
+  @Schema(name = "monthlyExpenses", example = "1000", requiredMode = Schema.RequiredMode.NOT_REQUIRED)
+  @JsonProperty("monthlyExpenses")
+  public BigDecimal getMonthlyExpenses() {
+    return monthlyExpenses;
+  }
+
+  public void setMonthlyExpenses(@Nullable BigDecimal monthlyExpenses) {
+    this.monthlyExpenses = monthlyExpenses;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) {
@@ -101,23 +119,25 @@ public class CustomerProfileEconomicCircumstances {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    CustomerProfileEconomicCircumstances that = (CustomerProfileEconomicCircumstances) o;
+    EconomicCircumstances that = (EconomicCircumstances) o;
     return Objects.equals(this.annualIncome, that.annualIncome) &&
             Objects.equals(this.netWorth, that.netWorth) &&
-            Objects.equals(this.liabilities, that.liabilities);
+            Objects.equals(this.liabilities, that.liabilities) &&
+            Objects.equals(this.monthlyExpenses, that.monthlyExpenses);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(annualIncome, netWorth, liabilities);
+    return Objects.hash(annualIncome, netWorth, liabilities, monthlyExpenses);
   }
 
   @Override
   public String toString() {
-    return "class CustomerProfileEconomicCircumstances {\n" +
+    return "class EconomicCircumstances {\n" +
             "    annualIncome: " + toIndentedString(annualIncome) + "\n" +
             "    netWorth: " + toIndentedString(netWorth) + "\n" +
             "    liabilities: " + toIndentedString(liabilities) + "\n" +
+            "    monthlyExpenses: " + toIndentedString(monthlyExpenses) + "\n" +
             "}";
   }
 

@@ -24,7 +24,6 @@ public class DomainObjectRepository {
         this.dsl = dsl;
     }
 
-    // Bestehende Methode: Alle DomainObjects abrufen
     public List<DomainObject> findAll() {
         Result<Record> records = dsl.select()
                 .from(BusinessObject.BUSINESS_OBJECT)
@@ -70,46 +69,33 @@ public class DomainObjectRepository {
         return domainObjects.isEmpty() ? Optional.empty() : Optional.of(domainObjects.get(0));
     }
 
-    public Optional<DomainObject> save(Optional<DomainObject> domainObjectOptional) {
-        if (domainObjectOptional.isEmpty()) {
+    public Optional<DomainObject> save(DomainObject domainObject) {
+        if (domainObject == null) {
             return Optional.empty();
         }
 
-        DomainObject domainObject = domainObjectOptional.get();
+        UUID domainObjectId = Optional.ofNullable(domainObject.getId()).orElse(UUID.randomUUID());
+        domainObject.setId(domainObjectId);
 
-        if (domainObject.getId() == null) {
-            domainObject.setId(UUID.randomUUID());
-            dsl.insertInto(BusinessObject.BUSINESS_OBJECT)
-                    .set(BusinessObject.BUSINESS_OBJECT.ID, domainObject.getId())
-                    .set(BusinessObject.BUSINESS_OBJECT.TYPE, domainObject.getType())
-                    .execute();
-        } else {
+        if (existsById(domainObjectId)) {
             dsl.update(BusinessObject.BUSINESS_OBJECT)
                     .set(BusinessObject.BUSINESS_OBJECT.TYPE, domainObject.getType())
-                    .where(BusinessObject.BUSINESS_OBJECT.ID.eq(domainObject.getId()))
+                    .set(BusinessObject.BUSINESS_OBJECT.NAME, domainObject.getName())
+                    .where(BusinessObject.BUSINESS_OBJECT.ID.eq(domainObjectId))
+                    .execute();
+        } else {
+            dsl.insertInto(BusinessObject.BUSINESS_OBJECT)
+                    .set(BusinessObject.BUSINESS_OBJECT.ID, domainObjectId)
+                    .set(BusinessObject.BUSINESS_OBJECT.TYPE, domainObject.getType())
+                    .set(BusinessObject.BUSINESS_OBJECT.NAME, domainObject.getName())
                     .execute();
         }
 
-        // Attribute aktualisieren
-        dsl.deleteFrom(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES)
-                .where(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES.BUSINESS_OBJECT_ID.eq(domainObject.getId()))
-                .execute();
+        updateAttributes(domainObject);
 
-        domainObject.getAttributes().forEach(attribute -> {
-            attribute.setId(UUID.randomUUID());
-            dsl.insertInto(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES)
-                    .set(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES.ID, attribute.getId())
-                    .set(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES.BUSINESS_OBJECT_ID, domainObject.getId())
-                    .set(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES.ATTRIBUTE_NAME, attribute.getAttributeName())
-                    .set(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES.ATTRIBUTE_VALUE, attribute.getAttributeValue())
-                    .execute();
-        });
-
-        // Speichern abgeschlossen, aktualisiertes DomainObject zurückgeben
-        return findById(domainObject.getId());
+        return findById(domainObjectId);
     }
 
-    // Neue Methode: Ein DomainObject löschen
     public boolean deleteById(UUID id) {
         dsl.deleteFrom(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES)
                 .where(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES.BUSINESS_OBJECT_ID.eq(id))
@@ -122,18 +108,39 @@ public class DomainObjectRepository {
         return deletedObjects > 0;
     }
 
-    // Hilfsmethode: Records in DomainObjects mappen
+    private void updateAttributes(DomainObject domainObject) {
+        UUID domainObjectId = domainObject.getId();
+
+        // Lösche existierende Attribute
+        dsl.deleteFrom(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES)
+                .where(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES.BUSINESS_OBJECT_ID.eq(domainObjectId))
+                .execute();
+
+        // Füge neue Attribute hinzu
+        domainObject.getAttributes().forEach(attribute -> {
+            UUID attributeId = Optional.ofNullable(attribute.getId()).orElse(UUID.randomUUID());
+            attribute.setId(attributeId);
+
+            dsl.insertInto(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES)
+                    .set(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES.ID, attributeId)
+                    .set(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES.BUSINESS_OBJECT_ID, domainObjectId)
+                    .set(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES.ATTRIBUTE_NAME, attribute.getAttributeName())
+                    .set(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES.ATTRIBUTE_VALUE, attribute.getAttributeValue())
+                    .execute();
+        });
+    }
+
     private List<DomainObject> mapRecordsToDomainObjects(Result<Record> records) {
-        return records.intoGroups(BusinessObject.BUSINESS_OBJECT.ID).values().stream()
-                .map(recordResult -> {
-                    BusinessObjectRecord businessObjectRecord = recordResult.get(0).into(BusinessObject.BUSINESS_OBJECT);
-                    List<DomainObjectAttribute> attributes = recordResult.stream()
-                            .filter(domainObjectAttribute -> domainObjectAttribute.get(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES.ID) != null)
-                            .map(domainObjectAttribute -> new DomainObjectAttribute(
-                                    domainObjectAttribute.get(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES.ID),
+        return records.intoGroups(BusinessObject.BUSINESS_OBJECT.ID).entrySet().stream()
+                .map(entry -> {
+                    BusinessObjectRecord businessObjectRecord = entry.getValue().get(0).into(BusinessObject.BUSINESS_OBJECT);
+                    List<DomainObjectAttribute> attributes = entry.getValue().stream()
+                            .filter(record -> record.get(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES.ID) != null)
+                            .map(record -> new DomainObjectAttribute(
+                                    record.get(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES.ID),
                                     null,
-                                    domainObjectAttribute.get(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES.ATTRIBUTE_NAME),
-                                    domainObjectAttribute.get(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES.ATTRIBUTE_VALUE)
+                                    record.get(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES.ATTRIBUTE_NAME),
+                                    record.get(BusinessObjectAttributes.BUSINESS_OBJECT_ATTRIBUTES.ATTRIBUTE_VALUE)
                             ))
                             .collect(Collectors.toList());
 
@@ -148,7 +155,10 @@ public class DomainObjectRepository {
     }
 
     public boolean existsById(UUID id) {
-        Optional<DomainObject> byId = findById(id);
-        return byId.isPresent();
+        return dsl.fetchExists(
+                dsl.selectOne()
+                        .from(BusinessObject.BUSINESS_OBJECT)
+                        .where(BusinessObject.BUSINESS_OBJECT.ID.eq(id))
+        );
     }
 }
