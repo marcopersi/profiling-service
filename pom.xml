@@ -15,9 +15,6 @@
         <java.version>17</java.version>
         <spring-boot.version>3.1.2</spring-boot.version>
         <jooq.version>3.17.7</jooq.version>
-        <db.url>jdbc:postgresql://localhost:5433/profiling_db</db.url>
-        <db.username>postgres</db.username>
-        <db.password>password</db.password>
     </properties>
 
     <repositories>
@@ -149,7 +146,7 @@
                         </goals>
                         <configuration>
                             <files>
-                                <file>src/main/resources/database.properties</file>
+                                <file>src/main/resources/database-local.properties</file>
                             </files>
                         </configuration>
                     </execution>
@@ -200,9 +197,9 @@
                 <configuration>
                     <jdbc>
                         <driver>org.postgresql.Driver</driver>
-                        <url>${db.url}</url>
-                        <user>${db.username}</user>
-                        <password>${db.password}</password>
+                        <url>${spring.datasource.url}</url>
+                        <user>${spring.datasource.username}</user>
+                        <password>${spring.datasource.password}</password>
                     </jdbc>
                     <generator>
                         <database>
@@ -237,4 +234,42 @@
             </plugin>            
         </plugins>
     </build>
-</project>  
+    <profiles>
+        <profile>
+            <id>local</id>
+            <properties>
+                <spring.profiles.active>local</spring.profiles.active>
+            </properties>
+            <build>
+                <finalName>profiling-service-local</finalName>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                        <includes>
+                            <include>application.properties</include>
+                            <include>database-local.properties</include>
+                        </includes>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+        <profile>
+            <id>docker</id>
+            <properties>
+                <spring.profiles.active>docker</spring.profiles.active>
+            </properties>
+            <build>
+                <finalName>profiling-service-docker</finalName>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources</directory>
+                        <includes>
+                            <include>application.properties</include>
+                            <include>database-docker.properties</include>
+                        </includes>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
+    </profiles>
+</project>

@@ -1,11 +1,11 @@
 spring:
   config:
-    import: "classpath:database.properties"
+    import: optional:classpath:database-${spring.profiles.active}.properties
   datasource:
-    url: ${db.url}
+    url: ${spring.datasource.url}
     driver-class-name: org.postgresql.Driver
-    username: ${db.username}
-    password: ${db.password}
+    username: ${spring.datasource.username}
+    password: ${spring.datasource.password}
   jpa:
     hibernate:
       ddl-auto: none
