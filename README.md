@@ -75,7 +75,7 @@ http://localhost:8080/swagger-ui.html
 # Reload/Regenerate DB Schema using postgres and JooQ
 If you have to recreate the dB schema in postgres, for example as a foundation for the jooq generator, you may load the schema file to postgres directly using 
 
-code psql -h localhost -U postgres -d profiling_db -f src/main/resources/schema.sql    
+<code>psql -h localhost -U postgres -d profiling_db -f src/main/resources/schema.sql</code>
 
 Where the 
 * -U is the userId
