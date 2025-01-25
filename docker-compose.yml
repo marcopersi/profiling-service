@@ -25,7 +25,7 @@ services:
     networks:
       - pg-network
 
-  app:
+  actics-profiling-service:
     image: actics-fidleg-profiling-service:latest
     container_name: profiling-service-app
     build:

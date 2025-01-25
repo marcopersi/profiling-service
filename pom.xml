@@ -198,7 +198,7 @@
                 <configuration>
                     <jdbc>
                         <driver>org.postgresql.Driver</driver>
-                        <url>jdbc:postgresql://localhost:5432/profiling_db</url>
+                        <url>jdbc:postgresql://localhost:5433/profiling_db</url>
                         <user>postgres</user>
                         <password>password</password>
                     </jdbc>
