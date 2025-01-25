@@ -1,9 +1,11 @@
 spring:
+  config:
+    import: "classpath:database.properties"
   datasource:
-    url: jdbc:postgresql://localhost:5433/profiling_db
+    url: ${db.url}
     driver-class-name: org.postgresql.Driver
-    username: ${DB_USERNAME:postgres}
-    password: ${DB_PASSWORD:password}
+    username: ${db.username}
+    password: ${db.password}
   jpa:
     hibernate:
       ddl-auto: none
