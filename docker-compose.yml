@@ -1,15 +1,13 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:latest
-    container_name: postgres-profile-service
+    container_name: postgres-profile-db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
       POSTGRES_DB: profiling_db
     ports:
-      - "5432:5432"
+      - "5433:5432"
     networks:
       - pg-network
     volumes:
@@ -23,18 +21,18 @@ services:
       PGADMIN_DEFAULT_EMAIL: marcopersi@me.com
       PGADMIN_DEFAULT_PASSWORD: admin
     ports:
-      - "3000:80"
+      - "3330:80"
     networks:
       - pg-network
 
   app:
-    image: openjdk:17-jdk-slim
+    image: actics-fidleg-profiling-service:latest
     container_name: profiling-service-app
     build:
       context: .
       dockerfile: Dockerfile
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/profiling_db
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5433/profiling_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: password
       SPRING_JPA_HIBERNATE_DDL_AUTO: update

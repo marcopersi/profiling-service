@@ -2,3 +2,5 @@
 .idea
 .openapi-generator-ignore
 .openapi-generator/
+.vscode/settings.json
+logs/application.log
